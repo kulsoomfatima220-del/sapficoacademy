@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#0f172a"/>
+
+  <!-- Gold border ring -->
+  <rect x="16" y="16" width="480" height="480" rx="68" fill="none" stroke="#c9a84c" stroke-width="8"/>
+
+  <!-- Gold gradient circle background -->
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d080"/>
+      <stop offset="50%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#8a6a1a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="220" r="180" fill="url(#glow)"/>
+
+  <!-- Graduation cap -->
+  <!-- Board -->
+  <rect x="156" y="210" width="200" height="24" rx="4" fill="url(#gold)"/>
+  <!-- Top pyramid -->
+  <polygon points="256,140 156,210 356,210" fill="url(#gold)"/>
+  <!-- Tassel string -->
+  <line x1="340" y1="210" x2="340" y2="270" stroke="#c9a84c" stroke-width="6" stroke-linecap="round"/>
+  <!-- Tassel ball -->
+  <circle cx="340" cy="278" r="12" fill="url(#gold)"/>
+  <!-- Tassel fringe -->
+  <line x1="332" y1="278" x2="326" y2="298" stroke="#c9a84c" stroke-width="3" stroke-linecap="round"/>
+  <line x1="340" y1="280" x2="338" y2="300" stroke="#c9a84c" stroke-width="3" stroke-linecap="round"/>
+  <line x1="348" y1="278" x2="354" y2="298" stroke="#c9a84c" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Text: FICO -->
+  <text x="256" y="330" font-family="Arial, sans-serif" font-weight="900" font-size="72" fill="url(#gold)" text-anchor="middle" letter-spacing="4">FICO</text>
+
+  <!-- Text: ACADEMY -->
+  <text x="256" y="375" font-family="Arial, sans-serif" font-weight="400" font-size="28" fill="#64748b" text-anchor="middle" letter-spacing="8">ACADEMY</text>
+
+  <!-- Bottom gold line -->
+  <rect x="96" y="395" width="320" height="2" rx="1" fill="url(#gold)" opacity="0.6"/>
+
+  <!-- Text: GULF -->
+  <text x="256" y="430" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#c9a84c" text-anchor="middle" letter-spacing="10">GULF</text>
+</svg>
