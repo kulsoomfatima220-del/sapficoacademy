@@ -1627,6 +1627,318 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
       return null;
     }
 
+    // ─── GL CONFIGURATION SIMULATOR ──────────────────────────────────────────
+    const glConfigExercises = [
+      {
+        id:"gl1", title:"Create Company Code", tcode:"OX02", icon:"🏢", color:"#3b82f6",
+        tier:"free",
+        description:"Create a new Company Code for Gulf Trading LLC, a UAE based company. This is the legal entity that will be used for all financial postings.",
+        theory:`A Company Code is the smallest organizational unit in SAP FI for which complete financial statements can be created. Every financial transaction must be assigned to a company code.\n\nKey settings:\n• Company Code = 4-character alphanumeric key\n• Country = defines legal requirements\n• Currency = local currency\n• Language = system language\n• Chart of Accounts = assigned later`,
+        fields:[
+          {id:"compcode", label:"Company Code", placeholder:"e.g. AE01", correct:"AE01", hint:"4 characters — AE = UAE, 01 = first company"},
+          {id:"compname", label:"Company Name", placeholder:"e.g. Gulf Trading LLC", correct:"Gulf Trading LLC", hint:"Full legal name of the company"},
+          {id:"city", label:"City", placeholder:"e.g. Sharjah", correct:"Sharjah", hint:"City where company is registered"},
+          {id:"country", label:"Country Key", placeholder:"e.g. AE", correct:"AE", hint:"AE = United Arab Emirates"},
+          {id:"currency", label:"Currency", placeholder:"e.g. AED", correct:"AED", hint:"UAE Dirham — local currency"},
+          {id:"language", label:"Language", placeholder:"e.g. EN", correct:"EN", hint:"EN = English"},
+        ],
+        result:"✅ Company Code AE01 created successfully! Gulf Trading LLC is now set up as a legal entity in SAP. Next step: Assign a Chart of Accounts using OBY6.",
+        learning:"After creating Company Code, you must: (1) Assign Chart of Accounts in OBY6, (2) Set Fiscal Year Variant, (3) Set Posting Period Variant, (4) Assign Company Code to Controlling Area."
+      },
+      {
+        id:"gl2", title:"Create Chart of Accounts", tcode:"OB13", icon:"📊", color:"#22c55e",
+        tier:"free",
+        description:"Create a new Chart of Accounts called 'GULF' for Gulf Trading LLC. This will be the operative chart of accounts for all GL postings.",
+        theory:`A Chart of Accounts (COA) is a list of all GL accounts used by one or more company codes. There are three types:\n\n• Operative COA — used for daily postings (mandatory)\n• Group COA — used for consolidation\n• Country COA — for legal requirements\n\nThe COA key is 4 characters and must be assigned to each company code.`,
+        fields:[
+          {id:"coakey", label:"Chart of Accounts Key", placeholder:"e.g. GULF", correct:"GULF", hint:"4-character unique key for your COA"},
+          {id:"coadesc", label:"Description", placeholder:"e.g. Gulf Trading Chart of Accounts", correct:"Gulf Trading Chart of Accounts", hint:"Full description of the COA"},
+          {id:"maintlang", label:"Maintenance Language", placeholder:"e.g. EN", correct:"EN", hint:"Language for maintaining accounts"},
+          {id:"glacclen", label:"GL Account Length", placeholder:"e.g. 6", correct:"6", hint:"Number of digits in GL account numbers"},
+          {id:"coacontint", label:"Controlling Integration", placeholder:"e.g. Manual", correct:"Manual", hint:"How CO accounts are created — Manual or Automatic"},
+        ],
+        result:"✅ Chart of Accounts GULF created! You can now create GL accounts using FS00. Assign this COA to Company Code AE01 using OBY6.",
+        learning:"After creating COA: (1) Assign to Company Code in OBY6, (2) Create Account Groups in OBD4, (3) Define Retained Earnings Account in OB53, (4) Start creating GL Accounts with FS00."
+      },
+      {
+        id:"gl3", title:"Create GL Account", tcode:"FS00", icon:"📒", color:"#8b5cf6",
+        tier:"free",
+        description:"Create a GL Account for 'Office Supplies Expense' in Chart of Accounts GULF and Company Code AE01.",
+        theory:`A GL Account Master Record has two views:\n\n1. Chart of Accounts View:\n• Account number and name\n• Account type (P&L or Balance Sheet)\n• Account group\n\n2. Company Code View:\n• Currency\n• Tax category\n• Field status group\n• Reconciliation account type (for vendors/customers)`,
+        fields:[
+          {id:"glacc", label:"GL Account Number", placeholder:"e.g. 400100", correct:"400100", hint:"6-digit account number for expenses"},
+          {id:"coakey2", label:"Chart of Accounts", placeholder:"e.g. GULF", correct:"GULF", hint:"The COA this account belongs to"},
+          {id:"acctype", label:"Account Type", placeholder:"e.g. P&L", correct:"P&L", hint:"P&L = Income Statement account"},
+          {id:"accgroup", label:"Account Group", placeholder:"e.g. GEXP", correct:"GEXP", hint:"GEXP = General Expenses group"},
+          {id:"shorttext", label:"Short Text", placeholder:"e.g. Office Supplies", correct:"Office Supplies", hint:"Short description shown in reports"},
+          {id:"longtext", label:"Long Text", placeholder:"e.g. Office Supplies Expense", correct:"Office Supplies Expense", hint:"Full account description"},
+          {id:"currency2", label:"Account Currency", placeholder:"e.g. AED", correct:"AED", hint:"Currency for this account"},
+          {id:"taxcat", label:"Tax Category", placeholder:"e.g. V", correct:"V", hint:"V = Input tax allowed on this account"},
+        ],
+        result:"✅ GL Account 400100 created in GULF/AE01! Office Supplies Expense account is ready for postings. Use FB50 to post journal entries to this account.",
+        learning:"GL Account 400100 is now available for posting. In FB50 use posting key 40 to debit this account. The account group GEXP controls which fields are required during document entry."
+      },
+      {
+        id:"gl4", title:"Assign Chart of Accounts to Company Code", tcode:"OBY6", icon:"🔗", color:"#f59e0b",
+        tier:"free",
+        description:"Assign Chart of Accounts GULF to Company Code AE01 and complete the global settings for Gulf Trading LLC.",
+        theory:`Before any postings can be made, the Chart of Accounts must be assigned to the Company Code. This is done in OBY6 (Company Code Global Settings).\n\nOBY6 also sets:\n• Fiscal Year Variant (e.g. K4 = Jan-Dec)\n• Posting Period Variant\n• Field Status Variant\n• Max exchange rate deviation`,
+        fields:[
+          {id:"compcode2", label:"Company Code", placeholder:"e.g. AE01", correct:"AE01", hint:"The company code to configure"},
+          {id:"coaassign", label:"Chart of Accounts", placeholder:"e.g. GULF", correct:"GULF", hint:"Assign your COA to this company code"},
+          {id:"fyvariant", label:"Fiscal Year Variant", placeholder:"e.g. K4", correct:"K4", hint:"K4 = Calendar year Jan-Dec (used in UAE)"},
+          {id:"crvariant", label:"Credit Control Area", placeholder:"e.g. AE01", correct:"AE01", hint:"Usually same as company code"},
+          {id:"fieldstatus", label:"Field Status Variant", placeholder:"e.g. 0001", correct:"0001", hint:"Controls required/optional fields in postings"},
+          {id:"maxexrate", label:"Max Exchange Rate Deviation %", placeholder:"e.g. 10", correct:"10", hint:"Maximum allowed FX rate deviation"},
+        ],
+        result:"✅ Chart of Accounts GULF assigned to Company Code AE01! Gulf Trading LLC is now fully configured. Fiscal Year K4 (Jan-Dec) set. Ready for postings!",
+        learning:"Your company code is now fully configured! The complete setup flow is: OX02 (Create Company Code) → OB13 (Create COA) → OBY6 (Assign COA) → OBD4 (Account Groups) → OB53 (Retained Earnings) → FS00 (Create GL Accounts)."
+      },
+    ];
+
+    function GLConfigSim({isPremium}){
+      const [mode,setMode]=useState("list");
+      const [activeEx,setActiveEx]=useState(null);
+      const [tab,setTab]=useState("theory");
+      const [step,setStep]=useState(0);
+      const [values,setValues]=useState({});
+      const [practiceValues,setPracticeValues]=useState({});
+      const [checked,setChecked]=useState({});
+      const [practiceSubmitted,setPracticeSubmitted]=useState(false);
+      const [score,setScore]=useState(0);
+      const [completedEx,setCompletedEx]=useState([]);
+
+      function startEx(ex){
+        setActiveEx(ex);setTab("theory");setStep(0);
+        setValues({});setPracticeValues({});
+        setChecked({});setPracticeSubmitted(false);setScore(0);
+        setMode("exercise");
+      }
+
+      function nextGuidedStep(){
+        if(step<activeEx.fields.length-1) setStep(step+1);
+        else{
+          if(!completedEx.includes(activeEx.id)) setCompletedEx(c=>[...c,activeEx.id]);
+          setTab("result");
+        }
+      }
+
+      function submitPractice(){
+        let sc=0; const ch={};
+        activeEx.fields.forEach(f=>{
+          const ok=(practiceValues[f.id]||"").trim().toLowerCase()===f.correct.toLowerCase();
+          ch[f.id]=ok; if(ok) sc++;
+        });
+        setChecked(ch); setScore(sc); setPracticeSubmitted(true);
+        if(!completedEx.includes(activeEx.id)&&sc===activeEx.fields.length) setCompletedEx(c=>[...c,activeEx.id]);
+      }
+
+      const iS={width:"100%",padding:"10px 14px",background:"#0f172a",border:"1px solid #334155",borderRadius:10,color:"#f1f5f9",fontSize:14,outline:"none",boxSizing:"border-box",marginBottom:4};
+
+      if(mode==="list") return (
+        <div>
+          <div style={{marginBottom:24}}>
+            <h2 style={{color:"#f1f5f9",margin:"0 0 6px",fontSize:22}}>⚙️ GL Configuration Lab</h2>
+            <p style={{color:"#64748b",fontSize:14,margin:"0 0 16px"}}>Practice creating Company Code, Chart of Accounts and GL Accounts — just like real SAP!</p>
+            <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:12,padding:14,marginBottom:20}}>
+              <div style={{color:"#94a3b8",fontSize:12,fontWeight:700,marginBottom:8}}>📋 Configuration Flow:</div>
+              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                {["OX02\nCompany Code","OB13\nChart of Accounts","OBY6\nAssign COA","OBD4\nAccount Groups","FS00\nGL Accounts"].map((s,i)=>(
+                  <React.Fragment key={i}>
+                    <div style={{background:"#0f172a",borderRadius:8,padding:"6px 10px",textAlign:"center"}}>
+                      <div style={{color:"#3b82f6",fontSize:10,fontWeight:700}}>{s.split("\n")[0]}</div>
+                      <div style={{color:"#475569",fontSize:9}}>{s.split("\n")[1]}</div>
+                    </div>
+                    {i<4&&<div style={{color:"#334155",fontSize:16}}>→</div>}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:14}}>
+            {glConfigExercises.map((ex,i)=>{
+              const done=completedEx.includes(ex.id);
+              return (
+                <div key={ex.id} style={{background:"#1e293b",border:`2px solid ${done?ex.color+"88":ex.color+"33"}`,borderRadius:16,padding:20,cursor:"pointer",position:"relative",transition:"transform 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 8px 24px ${ex.color}22`;}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}
+                  onClick={()=>startEx(ex)}>
+                  {done&&<div style={{position:"absolute",top:12,right:12,background:"#22c55e22",border:"1px solid #22c55e44",borderRadius:20,padding:"2px 8px",color:"#22c55e",fontSize:10,fontWeight:700}}>✅ Done</div>}
+                  <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                    <span style={{fontSize:28}}>{ex.icon}</span>
+                    <div style={{background:ex.color+"22",border:`1px solid ${ex.color}44`,borderRadius:6,padding:"3px 10px",color:ex.color,fontSize:11,fontWeight:800}}>{ex.tcode}</div>
+                  </div>
+                  <div style={{color:"#94a3b8",fontSize:11,marginBottom:4}}>Step {i+1} of {glConfigExercises.length}</div>
+                  <h3 style={{color:"#f1f5f9",margin:"0 0 6px",fontSize:15}}>{ex.title}</h3>
+                  <p style={{color:"#64748b",fontSize:12,margin:"0 0 10px",lineHeight:1.5}}>{ex.description.substring(0,70)}...</p>
+                  <div style={{color:"#475569",fontSize:11}}>📝 {ex.fields.length} fields · Theory + Guided + Practice</div>
+                </div>
+              );
+            })}
+          </div>
+          {completedEx.length===glConfigExercises.length&&(
+            <div style={{background:"linear-gradient(135deg,#1e3a5f,#1e1b4b)",border:"1px solid #c9a84c44",borderRadius:16,padding:24,textAlign:"center",marginTop:20}}>
+              <div style={{fontSize:48,marginBottom:8}}>🏆</div>
+              <div style={{color:"#c9a84c",fontWeight:800,fontSize:20,marginBottom:6}}>GL Configuration Complete!</div>
+              <div style={{color:"#64748b",fontSize:14}}>You can now configure a full SAP GL setup from scratch! 🎉</div>
+            </div>
+          )}
+        </div>
+      );
+
+      // Exercise screen
+      return (
+        <div style={{maxWidth:760,margin:"0 auto"}}>
+          <button onClick={()=>setMode("list")} style={bkBtn}>← Back to Config Lab</button>
+
+          {/* Header */}
+          <div style={{background:"#1e293b",border:`2px solid ${activeEx.color}44`,borderRadius:16,padding:20,marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10,flexWrap:"wrap"}}>
+              <span style={{fontSize:32}}>{activeEx.icon}</span>
+              <div>
+                <div style={{color:"#f1f5f9",fontWeight:700,fontSize:18}}>{activeEx.title}</div>
+                <div style={{color:"#64748b",fontSize:13}}>T-Code: {activeEx.tcode}</div>
+              </div>
+              <div style={{marginLeft:"auto",background:activeEx.color+"22",border:`1px solid ${activeEx.color}44`,borderRadius:8,padding:"4px 12px",color:activeEx.color,fontSize:11,fontWeight:800}}>{activeEx.tcode}</div>
+            </div>
+            <div style={{background:"#0f172a",borderRadius:10,padding:12,color:"#94a3b8",fontSize:13,lineHeight:1.7}}>{activeEx.description}</div>
+          </div>
+
+          {/* Tabs */}
+          <div style={{display:"flex",background:"#1e293b",borderRadius:12,padding:4,marginBottom:16,gap:4}}>
+            {[["theory","📖 Theory"],["guided","🔢 Guided"],["practice","🎯 Practice"],["result","✅ Result"]].map(([t,l])=>(
+              <button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"8px 0",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:11,background:tab===t?activeEx.color:"transparent",color:tab===t?"#fff":"#64748b",transition:"all 0.2s"}}>{l}</button>
+            ))}
+          </div>
+
+          {/* Theory Tab */}
+          {tab==="theory"&&(
+            <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:14,padding:24}}>
+              <div style={{color:activeEx.color,fontWeight:700,fontSize:15,marginBottom:14}}>📖 What is {activeEx.title}?</div>
+              <div style={{color:"#cbd5e1",fontSize:14,lineHeight:1.9,whiteSpace:"pre-line"}}>{activeEx.theory}</div>
+              <button onClick={()=>setTab("guided")} style={{width:"100%",marginTop:20,padding:"12px 0",background:`linear-gradient(90deg,${activeEx.color},${activeEx.color}99)`,border:"none",borderRadius:10,color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer"}}>
+                Ready! Start Guided Practice →
+              </button>
+            </div>
+          )}
+
+          {/* Guided Tab */}
+          {tab==="guided"&&(
+            <div style={{background:"#1e2a1e",border:`2px solid ${activeEx.color}44`,borderRadius:14,padding:24}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+                <div style={{background:activeEx.color+"22",border:`1px solid ${activeEx.color}44`,borderRadius:8,padding:"4px 12px",color:activeEx.color,fontSize:11,fontWeight:700}}>SAP — {activeEx.tcode}</div>
+                <div style={{color:"#475569",fontSize:12}}>{activeEx.title}</div>
+              </div>
+              <div style={{color:"#475569",fontSize:12,marginBottom:8}}>Field {step+1} of {activeEx.fields.length}</div>
+              <PBar value={step} max={activeEx.fields.length} color={activeEx.color}/>
+
+              <div style={{marginTop:16}}>
+                <div style={{color:activeEx.color,fontWeight:700,fontSize:14,marginBottom:4}}>👉 Enter: {activeEx.fields[step].label}</div>
+                <div style={{color:"#64748b",fontSize:12,marginBottom:10}}>💡 {activeEx.fields[step].hint}</div>
+                <input value={values[activeEx.fields[step].id]||""} onChange={e=>setValues({...values,[activeEx.fields[step].id]:e.target.value})}
+                  placeholder={activeEx.fields[step].placeholder} style={iS}
+                  onKeyDown={e=>e.key==="Enter"&&(values[activeEx.fields[step].id]||"").trim()&&nextGuidedStep()}/>
+              </div>
+
+              {step>0&&(
+                <div style={{marginTop:14,padding:12,background:"#0f1f0f",borderRadius:10}}>
+                  <div style={{color:"#475569",fontSize:10,marginBottom:6,textTransform:"uppercase",letterSpacing:1}}>Entered so far:</div>
+                  {activeEx.fields.slice(0,step).map(f=>(
+                    <div key={f.id} style={{display:"flex",justifyContent:"space-between",padding:"3px 0",borderBottom:"1px solid #1a2e1a"}}>
+                      <div style={{color:"#475569",fontSize:11}}>{f.label}</div>
+                      <div style={{color:activeEx.color,fontSize:11,fontWeight:600}}>{values[f.id]}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={nextGuidedStep} disabled={!(values[activeEx.fields[step].id]||"").trim()} style={{
+                width:"100%",marginTop:14,padding:"12px 0",
+                background:(values[activeEx.fields[step].id]||"").trim()?`linear-gradient(90deg,${activeEx.color},${activeEx.color}99)`:"#1e293b",
+                border:"none",borderRadius:10,color:(values[activeEx.fields[step].id]||"").trim()?"#fff":"#475569",
+                fontWeight:700,fontSize:14,cursor:(values[activeEx.fields[step].id]||"").trim()?"pointer":"default"
+              }}>
+                {step<activeEx.fields.length-1?"Next Field →":"✅ Complete Configuration"}
+              </button>
+            </div>
+          )}
+
+          {/* Practice Tab */}
+          {tab==="practice"&&(
+            <div style={{background:"#1e293b",border:`2px solid ${activeEx.color}33`,borderRadius:14,padding:24}}>
+              <div style={{color:"#64748b",fontSize:13,marginBottom:16,padding:"10px 14px",background:"#0f172a",borderRadius:10}}>
+                🎯 Fill all fields from memory — no hints this time!
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
+                {activeEx.fields.map(f=>{
+                  let border="#334155";
+                  if(practiceSubmitted) border=checked[f.id]?"#22c55e":"#ef4444";
+                  return (
+                    <div key={f.id}>
+                      <div style={{color:"#94a3b8",fontSize:12,marginBottom:4,fontWeight:600}}>{f.label}</div>
+                      <input value={practiceValues[f.id]||""} onChange={e=>!practiceSubmitted&&setPracticeValues({...practiceValues,[f.id]:e.target.value})}
+                        placeholder={f.placeholder} readOnly={practiceSubmitted}
+                        style={{...iS,border:`2px solid ${border}`,background:practiceSubmitted?(checked[f.id]?"#052e16":"#2d0a0a"):"#0f172a",marginBottom:2}}/>
+                      {practiceSubmitted&&(
+                        <div style={{fontSize:11,color:checked[f.id]?"#22c55e":"#f87171"}}>
+                          {checked[f.id]?"✅ Correct!":"❌ Answer: "+f.correct}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {!practiceSubmitted?(
+                <button onClick={submitPractice} style={{width:"100%",marginTop:20,padding:"13px 0",background:`linear-gradient(90deg,${activeEx.color},${activeEx.color}99)`,border:"none",borderRadius:10,color:"#fff",fontWeight:800,fontSize:15,cursor:"pointer"}}>
+                  ✅ Submit Configuration
+                </button>
+              ):(
+                <div>
+                  <div style={{background:"#0f172a",borderRadius:12,padding:20,marginTop:16,textAlign:"center"}}>
+                    <div style={{fontSize:40,marginBottom:8}}>{score===activeEx.fields.length?"🏆":score>activeEx.fields.length/2?"👍":"📚"}</div>
+                    <div style={{color:"#f1f5f9",fontWeight:800,fontSize:22}}>{score}/{activeEx.fields.length} Correct</div>
+                    <div style={{color:"#64748b",fontSize:13,marginTop:4}}>{score===activeEx.fields.length?"Perfect configuration!":"Review theory and try again!"}</div>
+                  </div>
+                  <div style={{display:"flex",gap:10,marginTop:14}}>
+                    <button onClick={()=>{setPracticeValues({});setChecked({});setPracticeSubmitted(false);setScore(0);}} style={{flex:1,padding:"11px 0",background:activeEx.color+"22",border:`1px solid ${activeEx.color}44`,borderRadius:10,color:activeEx.color,fontWeight:700,cursor:"pointer"}}>🔄 Try Again</button>
+                    <button onClick={()=>setTab("result")} style={{flex:1,padding:"11px 0",background:"#22c55e22",border:"1px solid #22c55e44",borderRadius:10,color:"#22c55e",fontWeight:700,cursor:"pointer"}}>✅ See Result</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Result Tab */}
+          {tab==="result"&&(
+            <div style={{background:"#1e293b",border:"1px solid #22c55e44",borderRadius:14,padding:24}}>
+              <div style={{textAlign:"center",marginBottom:20}}>
+                <div style={{fontSize:48,marginBottom:8}}>🎉</div>
+                <div style={{color:"#22c55e",fontWeight:800,fontSize:20,marginBottom:4}}>Configuration Complete!</div>
+              </div>
+              <div style={{background:"#052e16",border:"1px solid #22c55e33",borderRadius:12,padding:16,marginBottom:16}}>
+                <div style={{color:"#22c55e",fontWeight:700,fontSize:13,marginBottom:8}}>📋 SAP System Message:</div>
+                <div style={{color:"#94a3b8",fontSize:13,lineHeight:1.8}}>{activeEx.result}</div>
+              </div>
+              <div style={{background:"#1e3a5f22",border:"1px solid #3b82f633",borderRadius:12,padding:16,marginBottom:16}}>
+                <div style={{color:"#3b82f6",fontWeight:700,fontSize:13,marginBottom:8}}>📚 What Happens Next:</div>
+                <div style={{color:"#94a3b8",fontSize:13,lineHeight:1.8}}>{activeEx.learning}</div>
+              </div>
+              <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                <button onClick={()=>setMode("list")} style={{flex:1,padding:"12px 0",background:"linear-gradient(90deg,#3b82f6,#6366f1)",border:"none",borderRadius:10,color:"#fff",fontWeight:700,cursor:"pointer"}}>
+                  ← Back to Config Lab
+                </button>
+                {glConfigExercises.findIndex(e=>e.id===activeEx.id)<glConfigExercises.length-1&&(
+                  <button onClick={()=>startEx(glConfigExercises[glConfigExercises.findIndex(e=>e.id===activeEx.id)+1])} style={{flex:1,padding:"12px 0",background:"linear-gradient(90deg,#22c55e,#16a34a)",border:"none",borderRadius:10,color:"#fff",fontWeight:700,cursor:"pointer"}}>
+                    Next Exercise →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     function App(){
       const [user,setUser]=useState(()=>getSession());
       const [view,setView]=useState("home");
@@ -1662,11 +1974,12 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
 
       const navItems=[
         {id:"home",icon:"🏠",label:"Dashboard"},
+        {id:"glconfig",icon:"⚙️",label:"GL Config"},
         {id:"simulator",icon:"🖥️",label:"Simulator"},
         {id:"interview",icon:"🎤",label:"Interview"},
         {id:"cases",icon:"🔬",label:"Case Studies"},
         {id:"tcodes",icon:"📋",label:"T-Codes"},
-        ...(user.role==="admin"?[{id:"admin",icon:"⚙️",label:"Admin"}]:[]),
+        ...(user.role==="admin"?[{id:"admin",icon:"🔑",label:"Admin"}]:[]),
       ];
 
       let mainContent;
@@ -1767,6 +2080,8 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
             </div>
           </div>
         );
+      }else if(view==="glconfig"){
+        mainContent=<GLConfigSim isPremium={isPremium}/>;
       }else if(view==="interview"){
         mainContent=<InterviewSim isPremium={isPremium}/>;
       }else if(view==="simulator"){
