@@ -1939,6 +1939,290 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
       );
     }
 
+    // ─── RESOURCES PAGE ───────────────────────────────────────────────────────
+    const sapResources = {
+      freeAccess:[
+        {
+          name:"SAP Learning Hub — Free Trial",
+          url:"https://learning.sap.com",
+          icon:"🖥️",
+          color:"#3b82f6",
+          desc:"Official SAP learning platform. Get 30-day free access to SAP S/4HANA sandbox. Practice real transactions in a live system.",
+          steps:["Go to learning.sap.com","Click 'Start Learning'","Create free SAP account","Access SAP S/4HANA Cloud trial","Practice FB50, F110, and all T-codes!"],
+          badge:"FREE 30 DAYS"
+        },
+        {
+          name:"SAP BTP Free Tier",
+          url:"https://cockpit.btp.cloud.sap",
+          icon:"☁️",
+          color:"#22c55e",
+          desc:"SAP Business Technology Platform free tier. Get a real SAP system in the cloud — completely free forever with usage limits.",
+          steps:["Go to cockpit.btp.cloud.sap","Click 'Try for Free'","Register with email","Set up SAP S/4HANA system","Start practicing immediately"],
+          badge:"FREE FOREVER"
+        },
+        {
+          name:"SAP S/4HANA Fully Activated Appliance",
+          url:"https://cal.sap.com",
+          icon:"⚡",
+          color:"#f59e0b",
+          desc:"SAP Cloud Appliance Library. Full SAP S/4HANA system with pre-configured data. Free trial available — best for serious practice.",
+          steps:["Go to cal.sap.com","Create SAP account","Choose S/4HANA fully activated","Start 30-day free trial","Full system with master data included"],
+          badge:"30-DAY TRIAL"
+        },
+        {
+          name:"openSAP — Free Online Courses",
+          url:"https://open.sap.com",
+          icon:"📚",
+          color:"#8b5cf6",
+          desc:"Free SAP courses from SAP itself. Includes SAP FICO, S/4HANA Finance and more. Get official course completion badges.",
+          steps:["Go to open.sap.com","Search 'SAP FICO' or 'S/4HANA Finance'","Enroll free","Watch video lectures","Get SAP digital badge on completion"],
+          badge:"100% FREE"
+        },
+      ],
+      videos:[
+        {module:"GL Accounting", tcode:"FB50", title:"How to Post a Journal Entry in SAP", url:"https://www.youtube.com/results?search_query=SAP+FB50+journal+entry+tutorial", icon:"📘", color:"#3b82f6"},
+        {module:"GL Accounting", tcode:"FS00", title:"Create GL Account Master in SAP", url:"https://www.youtube.com/results?search_query=SAP+FS00+GL+account+create", icon:"📘", color:"#3b82f6"},
+        {module:"Accounts Payable", tcode:"FB60", title:"Post Vendor Invoice in SAP", url:"https://www.youtube.com/results?search_query=SAP+FB60+vendor+invoice+tutorial", icon:"📙", color:"#f59e0b"},
+        {module:"Accounts Payable", tcode:"F110", title:"Automatic Payment Program F110", url:"https://www.youtube.com/results?search_query=SAP+F110+automatic+payment+program", icon:"📙", color:"#f59e0b"},
+        {module:"Accounts Receivable", tcode:"FB70", title:"Post Customer Invoice in SAP", url:"https://www.youtube.com/results?search_query=SAP+FB70+customer+invoice", icon:"📕", color:"#ef4444"},
+        {module:"Accounts Receivable", tcode:"F150", title:"SAP Dunning Program Tutorial", url:"https://www.youtube.com/results?search_query=SAP+F150+dunning+program+tutorial", icon:"📕", color:"#ef4444"},
+        {module:"Controlling", tcode:"KP06", title:"Cost Center Planning in SAP CO", url:"https://www.youtube.com/results?search_query=SAP+KP06+cost+center+planning", icon:"🏭", color:"#8b5cf6"},
+        {module:"Asset Accounting", tcode:"AFAB", title:"SAP Depreciation Run Tutorial", url:"https://www.youtube.com/results?search_query=SAP+AFAB+depreciation+run+tutorial", icon:"🏗️", color:"#06b6d4"},
+        {module:"Configuration", tcode:"OX02", title:"Create Company Code in SAP", url:"https://www.youtube.com/results?search_query=SAP+OX02+create+company+code", icon:"⚙️", color:"#22c55e"},
+        {module:"Configuration", tcode:"OBY6", title:"SAP Global Company Code Settings", url:"https://www.youtube.com/results?search_query=SAP+OBY6+company+code+settings", icon:"⚙️", color:"#22c55e"},
+      ],
+      certifications:[
+        {
+          name:"SAP Certified Associate — SAP S/4HANA Financial Accounting",
+          code:"C_TFIN22_67",
+          icon:"🏅",
+          color:"#c9a84c",
+          level:"Associate",
+          price:"$500 (AED 1,835)",
+          examTopics:["Financial Accounting Basics (15%)","General Ledger (20%)","Accounts Payable (15%)","Accounts Receivable (15%)","Asset Accounting (15%)","Closing Operations (20%)"],
+          prepTime:"2-3 months",
+          passScore:"65%",
+          url:"https://training.sap.com/certification/c_tfin22_67",
+          tips:"This is the most important SAP FICO certification for Gulf jobs. Most UAE/KSA companies require this or prefer it. Your FICO Academy modules cover 90% of the exam content!"
+        },
+        {
+          name:"SAP Certified Associate — Management Accounting",
+          code:"C_TFIN22_67",
+          icon:"🏅",
+          color:"#8b5cf6",
+          level:"Associate",
+          price:"$500 (AED 1,835)",
+          examTopics:["Controlling Basics (15%)","Cost Center Accounting (25%)","Internal Orders (20%)","Profit Center Accounting (20%)","Product Costing (20%)"],
+          prepTime:"2-3 months",
+          passScore:"65%",
+          url:"https://training.sap.com/certification/c_tfin22_67",
+          tips:"Covers the CO module deeply. Take this after Financial Accounting certification. Together they make you a complete SAP FICO professional."
+        },
+        {
+          name:"SAP Certified Professional — Financial Accounting",
+          code:"P_TFIN22_67",
+          icon:"🏆",
+          color:"#22c55e",
+          level:"Professional",
+          price:"$750 (AED 2,753)",
+          examTopics:["Advanced FI Configuration","New GL & Parallel Accounting","Advanced Asset Accounting","Consolidation","Integration with MM/SD"],
+          prepTime:"6-12 months + 3 years experience",
+          passScore:"70%",
+          url:"https://training.sap.com",
+          tips:"Advanced certification for experienced consultants. Requires 3+ years of SAP FICO experience. Start with Associate first."
+        },
+      ],
+      certGuide:[
+        {step:1, title:"Complete FICO Academy Modules", time:"4-6 weeks", desc:"Finish all modules in this app — GL, AP, AR, CO, AA. Complete all quizzes with 80%+ score.", icon:"🎓"},
+        {step:2, title:"Get Free SAP System Access", time:"1 week", desc:"Sign up for SAP Learning Hub free trial. Practice every T-code you learned here in a real system.", icon:"🖥️"},
+        {step:3, title:"Watch YouTube Tutorials", time:"2 weeks", desc:"Watch the recommended videos for each module. See real SAP screens and navigation.", icon:"📺"},
+        {step:4, title:"Study SAP Official Guide", time:"4 weeks", desc:"Download the free SAP certification study guide from training.sap.com. Focus on exam topics.", icon:"📖"},
+        {step:5, title:"Practice Mock Exams", time:"2 weeks", desc:"Do practice questions on ERPPrep.com and SAP certification practice tests. Aim for 75%+ before booking.", icon:"📝"},
+        {step:6, title:"Book & Pass the Exam", time:"1 day", desc:"Book exam at pearsonvue.com. SAP exams are online — take from home! Pass with 65% to get certified.", icon:"🏅"},
+      ]
+    };
+
+    function ResourcesPage(){
+      const [tab,setTab]=useState("access");
+      const tabList=[["access","🖥️ Free SAP Access"],["videos","📺 Video Guide"],["cert","🏅 Certification"],["guide","🗺️ Study Guide"]];
+
+      return (
+        <div>
+          <div style={{marginBottom:20}}>
+            <h2 style={{color:"#f1f5f9",margin:"0 0 6px",fontSize:22}}>📚 Resources & Certification</h2>
+            <p style={{color:"#64748b",fontSize:14,margin:0}}>Free SAP access, video tutorials, certification guide — everything to make you job-ready!</p>
+          </div>
+
+          {/* Tabs */}
+          <div style={{display:"flex",background:"#1e293b",borderRadius:12,padding:4,marginBottom:20,gap:4,flexWrap:"wrap"}}>
+            {tabList.map(([t,l])=>(
+              <button key={t} onClick={()=>setTab(t)} style={{flex:1,minWidth:120,padding:"9px 0",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,background:tab===t?"#3b82f6":"transparent",color:tab===t?"#fff":"#64748b",transition:"all 0.2s"}}>{l}</button>
+            ))}
+          </div>
+
+          {/* FREE SAP ACCESS */}
+          {tab==="access"&&(
+            <div>
+              <div style={{background:"#1e3a5f22",border:"1px solid #3b82f633",borderRadius:12,padding:14,marginBottom:20}}>
+                <div style={{color:"#3b82f6",fontWeight:700,fontSize:13,marginBottom:4}}>💡 Why You Need Real SAP Access</div>
+                <div style={{color:"#64748b",fontSize:13,lineHeight:1.7}}>FICO Academy teaches you everything you need to know. But practicing on a real SAP system builds the muscle memory that impresses interviewers. Use these free options!</div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:14}}>
+                {sapResources.freeAccess.map(r=>(
+                  <div key={r.name} style={{background:"#1e293b",border:`1px solid ${r.color}44`,borderRadius:16,padding:20}}>
+                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                      <span style={{fontSize:28}}>{r.icon}</span>
+                      <div style={{background:r.color+"22",border:`1px solid ${r.color}44`,borderRadius:20,padding:"3px 10px",color:r.color,fontSize:10,fontWeight:700}}>{r.badge}</div>
+                    </div>
+                    <h3 style={{color:"#f1f5f9",fontSize:14,margin:"0 0 8px",fontWeight:700}}>{r.name}</h3>
+                    <p style={{color:"#64748b",fontSize:12,lineHeight:1.6,marginBottom:12}}>{r.desc}</p>
+                    <div style={{background:"#0f172a",borderRadius:10,padding:12,marginBottom:12}}>
+                      <div style={{color:"#94a3b8",fontSize:11,fontWeight:700,marginBottom:6,textTransform:"uppercase",letterSpacing:1}}>Steps:</div>
+                      {r.steps.map((s,i)=>(
+                        <div key={i} style={{color:"#64748b",fontSize:11,padding:"2px 0",display:"flex",gap:6}}>
+                          <span style={{color:r.color,fontWeight:700}}>{i+1}.</span>{s}
+                        </div>
+                      ))}
+                    </div>
+                    <a href={r.url} target="_blank" style={{display:"block",textAlign:"center",padding:"10px 0",background:`linear-gradient(90deg,${r.color},${r.color}99)`,borderRadius:10,color:"#fff",fontWeight:700,fontSize:13,textDecoration:"none"}}>
+                      🔗 Go to {r.name.split("—")[0].trim()} →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* VIDEOS */}
+          {tab==="videos"&&(
+            <div>
+              <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:12,padding:14,marginBottom:20}}>
+                <div style={{color:"#f59e0b",fontWeight:700,fontSize:13,marginBottom:4}}>📺 How to Use These Videos</div>
+                <div style={{color:"#64748b",fontSize:13,lineHeight:1.7}}>Watch each video AFTER completing the related module in FICO Academy. Seeing real SAP screens reinforces what you learned. All links open YouTube search for the best tutorials.</div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
+                {sapResources.videos.map(v=>(
+                  <a key={v.tcode} href={v.url} target="_blank" style={{textDecoration:"none",display:"block",background:"#1e293b",border:`1px solid ${v.color}33`,borderRadius:14,padding:16,transition:"transform 0.15s"}}
+                    onMouseEnter={e=>e.currentTarget.style.transform="translateY(-2px)"}
+                    onMouseLeave={e=>e.currentTarget.style.transform="none"}>
+                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+                      <span style={{fontSize:22}}>{v.icon}</span>
+                      <div style={{background:v.color+"22",border:`1px solid ${v.color}44`,borderRadius:6,padding:"3px 8px",color:v.color,fontSize:10,fontWeight:800}}>{v.tcode}</div>
+                      <div style={{color:"#475569",fontSize:10}}>{v.module}</div>
+                    </div>
+                    <div style={{color:"#f1f5f9",fontSize:13,fontWeight:600,marginBottom:6}}>{v.title}</div>
+                    <div style={{color:"#3b82f6",fontSize:11}}>▶ Watch on YouTube →</div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CERTIFICATION */}
+          {tab==="cert"&&(
+            <div>
+              <div style={{background:"#1e3a5f22",border:"1px solid #c9a84c33",borderRadius:12,padding:14,marginBottom:20}}>
+                <div style={{color:"#c9a84c",fontWeight:700,fontSize:13,marginBottom:4}}>🏅 Why SAP Certification Matters in Gulf</div>
+                <div style={{color:"#64748b",fontSize:13,lineHeight:1.7}}>SAP certified professionals earn 30-40% more than non-certified. In UAE & KSA, most SAP job postings prefer or require SAP certification. It's the fastest way to get hired!</div>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:16}}>
+                {sapResources.certifications.map(c=>(
+                  <div key={c.code} style={{background:"#1e293b",border:`2px solid ${c.color}44`,borderRadius:16,padding:24}}>
+                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:10,marginBottom:14}}>
+                      <div style={{display:"flex",alignItems:"center",gap:12}}>
+                        <span style={{fontSize:32}}>{c.icon}</span>
+                        <div>
+                          <div style={{color:"#f1f5f9",fontWeight:700,fontSize:16}}>{c.name}</div>
+                          <div style={{display:"flex",gap:8,marginTop:4,flexWrap:"wrap"}}>
+                            <Badge text={c.level} color={c.color}/>
+                            <Badge text={c.price} color="#64748b"/>
+                            <Badge text={`Pass: ${c.passScore}`} color="#22c55e"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
+                      <div style={{background:"#0f172a",borderRadius:10,padding:12}}>
+                        <div style={{color:"#94a3b8",fontSize:11,fontWeight:700,marginBottom:6,textTransform:"uppercase",letterSpacing:1}}>Exam Topics:</div>
+                        {c.examTopics.map((t,i)=>(
+                          <div key={i} style={{color:"#64748b",fontSize:11,padding:"2px 0"}}>• {t}</div>
+                        ))}
+                      </div>
+                      <div style={{background:"#0f172a",borderRadius:10,padding:12}}>
+                        <div style={{color:"#94a3b8",fontSize:11,fontWeight:700,marginBottom:6,textTransform:"uppercase",letterSpacing:1}}>Key Info:</div>
+                        <div style={{color:"#64748b",fontSize:11,lineHeight:2}}>
+                          ⏱ Prep time: {c.prepTime}<br/>
+                          💰 Exam fee: {c.price}<br/>
+                          ✅ Pass score: {c.passScore}<br/>
+                          🌍 Online exam from home
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{background:c.color+"11",border:`1px solid ${c.color}33`,borderRadius:10,padding:12,marginBottom:12}}>
+                      <div style={{color:c.color,fontWeight:700,fontSize:12,marginBottom:4}}>💡 Gulf Career Tip:</div>
+                      <div style={{color:"#94a3b8",fontSize:12,lineHeight:1.7}}>{c.tips}</div>
+                    </div>
+                    <a href={c.url} target="_blank" style={{display:"block",textAlign:"center",padding:"11px 0",background:`linear-gradient(90deg,${c.color},${c.color}99)`,borderRadius:10,color:"#fff",fontWeight:700,fontSize:13,textDecoration:"none"}}>
+                      🔗 View Certification Details →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* STUDY GUIDE */}
+          {tab==="guide"&&(
+            <div>
+              <div style={{background:"linear-gradient(135deg,#1e3a5f,#1e1b4b)",border:"1px solid #c9a84c33",borderRadius:16,padding:24,marginBottom:20,textAlign:"center"}}>
+                <div style={{fontSize:40,marginBottom:8}}>🗺️</div>
+                <div style={{color:"#f1f5f9",fontWeight:800,fontSize:20,marginBottom:6}}>Your Road to SAP Certification</div>
+                <div style={{color:"#64748b",fontSize:14}}>Follow these 6 steps to go from beginner to SAP certified in 3-4 months</div>
+              </div>
+              {sapResources.certGuide.map((s,i)=>(
+                <div key={i} style={{display:"flex",gap:16,marginBottom:14,background:"#1e293b",border:"1px solid #334155",borderRadius:14,padding:20}}>
+                  <div style={{width:44,height:44,borderRadius:"50%",background:"linear-gradient(135deg,#3b82f6,#6366f1)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:800,fontSize:16,flexShrink:0}}>{s.step}</div>
+                  <div style={{flex:1}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}>
+                      <span style={{fontSize:18}}>{s.icon}</span>
+                      <div style={{color:"#f1f5f9",fontWeight:700,fontSize:15}}>{s.title}</div>
+                      <div style={{background:"#3b82f622",border:"1px solid #3b82f644",borderRadius:20,padding:"2px 10px",color:"#3b82f6",fontSize:10,fontWeight:700}}>⏱ {s.time}</div>
+                    </div>
+                    <div style={{color:"#64748b",fontSize:13,lineHeight:1.7}}>{s.desc}</div>
+                    {i===0&&(
+                      <div style={{marginTop:8,background:"#22c55e11",border:"1px solid #22c55e33",borderRadius:8,padding:"8px 12px",color:"#22c55e",fontSize:12}}>
+                        ✅ You're already doing this! Keep going through FICO Academy modules.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div style={{background:"#0f172a",borderRadius:14,padding:20,border:"1px solid #334155",marginTop:4}}>
+                <div style={{color:"#c9a84c",fontWeight:700,fontSize:14,marginBottom:12}}>💰 Total Investment to Get Certified</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10}}>
+                  {[
+                    {item:"FICO Academy Premium",cost:"AED 199",color:"#22c55e"},
+                    {item:"SAP Learning Hub Trial",cost:"FREE",color:"#22c55e"},
+                    {item:"openSAP Courses",cost:"FREE",color:"#22c55e"},
+                    {item:"SAP Certification Exam",cost:"AED 1,835",color:"#f59e0b"},
+                    {item:"Total Investment",cost:"AED 2,034",color:"#c9a84c"},
+                  ].map(r=>(
+                    <div key={r.item} style={{background:"#1e293b",borderRadius:10,padding:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <div style={{color:"#94a3b8",fontSize:12}}>{r.item}</div>
+                      <div style={{color:r.color,fontWeight:800,fontSize:13}}>{r.cost}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{marginTop:14,padding:12,background:"#1e3a5f22",borderRadius:10,color:"#3b82f6",fontSize:13,lineHeight:1.7}}>
+                  💡 SAP certified professionals in Gulf earn AED 8,000–25,000/month. Your AED 2,034 investment pays back in the first month of employment!
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     function App(){
       const [user,setUser]=useState(()=>getSession());
       const [view,setView]=useState("home");
@@ -1978,6 +2262,7 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
         {id:"simulator",icon:"🖥️",label:"Simulator"},
         {id:"interview",icon:"🎤",label:"Interview"},
         {id:"cases",icon:"🔬",label:"Case Studies"},
+        {id:"resources",icon:"📚",label:"Resources"},
         {id:"tcodes",icon:"📋",label:"T-Codes"},
         ...(user.role==="admin"?[{id:"admin",icon:"🔑",label:"Admin"}]:[]),
       ];
@@ -2080,6 +2365,8 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
             </div>
           </div>
         );
+      }else if(view==="resources"){
+        mainContent=<ResourcesPage/>;
       }else if(view==="glconfig"){
         mainContent=<GLConfigSim isPremium={isPremium}/>;
       }else if(view==="interview"){
