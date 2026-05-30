@@ -2223,6 +2223,624 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
       );
     }
 
+    // ─── SAP GUI SIMULATOR ────────────────────────────────────────────────────
+    function SAPGuiSim(){
+      const [screen,setScreen]=useState("easymenu");
+      const [tcode,setTcode]=useState("");
+      const [tcodeInput,setTcodeInput]=useState("");
+      const [docData,setDocData]=useState({});
+      const [posted,setPosted]=useState(false);
+      const [docNumber,setDocNumber]=useState("");
+      const [notification,setNotification]=useState("");
+      const [history,setHistory]=useState([]);
+      const [menuOpen,setMenuOpen]=useState(null);
+
+      const sapScreens={
+        "FB50":"gl_posting",
+        "FB60":"vendor_invoice",
+        "FB70":"customer_invoice",
+        "FK01":"vendor_master",
+        "FD01":"customer_master",
+        "FS00":"gl_master",
+        "F110":"payment_program",
+        "FBL1N":"vendor_lineitems",
+        "FBL5N":"customer_lineitems",
+        "KS01":"cost_center",
+        "AS01":"asset_master",
+        "AFAB":"depreciation",
+        "S_ALR_87012284":"fin_statements",
+        "FB03":"display_doc",
+      };
+
+      const menuItems={
+        "Favorites":["FB50 — GL Account Posting","FB60 — Vendor Invoice","FB70 — Customer Invoice","F110 — Payment Program"],
+        "Financial Accounting":["FB50 — Enter GL Account Document","FB03 — Display Document","FB60 — Vendor Invoice","FB70 — Customer Invoice","FBL1N — Vendor Line Items","FBL5N — Customer Line Items"],
+        "Controlling":["KS01 — Create Cost Center","KP06 — Cost Center Planning","KSB1 — Cost Center Line Items"],
+        "Asset Accounting":["AS01 — Create Asset Master","AFAB — Post Depreciation","AW01N — Asset Explorer"],
+        "Reports":["S_ALR_87012284 — Financial Statements","S_ALR_87013611 — Cost Center Report"],
+      };
+
+      function runTcode(tc){
+        const clean=tc.trim().toUpperCase();
+        if(!clean)return;
+        setTcodeInput("");
+        setTcode(clean);
+        setPosted(false);
+        setDocData({});
+        setDocNumber("");
+        setMenuOpen(null);
+        if(sapScreens[clean]){
+          setScreen(sapScreens[clean]);
+          setHistory(h=>[clean,...h.slice(0,4)]);
+          showNotif("");
+        }else{
+          showNotif(`Transaction ${clean} is not available in this simulator`);
+        }
+      }
+
+      function showNotif(msg){setNotification(msg);if(msg)setTimeout(()=>setNotification(""),3000);}
+
+      function generateDocNum(){return String(Math.floor(Math.random()*900000)+100000);}
+
+      function postDocument(){
+        const num=generateDocNum();
+        setDocNumber(num);
+        setPosted(true);
+        showNotif(`Document ${num} posted successfully`);
+      }
+
+      // SAP Colors
+      const sapBg="#e8e8e8";
+      const sapHeader="#003399";
+      const sapMenuBg="#d4d4d4";
+      const sapFieldBg="#ffffff";
+      const sapBorder="#999999";
+      const sapText="#000000";
+      const sapLabel="#000080";
+      const sapBtn="#d4d4d4";
+      const sapBtnBorder="#808080";
+
+      const fieldStyle={
+        background:sapFieldBg,border:`1px solid ${sapBorder}`,
+        padding:"2px 6px",fontSize:13,color:sapText,
+        outline:"none",fontFamily:"Arial,sans-serif",
+        width:"100%",boxSizing:"border-box"
+      };
+      const labelStyle={color:sapLabel,fontSize:12,fontWeight:"bold",fontFamily:"Arial,sans-serif",whiteSpace:"nowrap"};
+      const btnStyle={
+        background:sapBtn,border:`2px outset ${sapBtnBorder}`,
+        padding:"3px 12px",fontSize:12,cursor:"pointer",
+        fontFamily:"Arial,sans-serif",color:sapText,fontWeight:"bold"
+      };
+      const sectionStyle={
+        background:"#f0f0f0",border:`1px solid ${sapBorder}`,
+        marginBottom:8,padding:"6px 10px"
+      };
+
+      // EASY ACCESS MENU
+      const EasyMenu=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto"}}>
+          <div style={{padding:8}}>
+            <div style={{background:"#003366",color:"#ffffff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+              SAP Easy Access — FICO Academy Gulf Practice System
+            </div>
+            {Object.entries(menuItems).map(([cat,items])=>(
+              <div key={cat} style={{marginBottom:4}}>
+                <div onClick={()=>setMenuOpen(menuOpen===cat?null:cat)} style={{
+                  background:menuOpen===cat?"#003399":"#d4d4d4",
+                  color:menuOpen===cat?"#fff":"#000080",
+                  padding:"4px 8px",cursor:"pointer",
+                  fontSize:12,fontWeight:"bold",fontFamily:"Arial,sans-serif",
+                  border:"1px solid #999",display:"flex",alignItems:"center",gap:6
+                }}>
+                  <span>{menuOpen===cat?"▼":"▶"}</span> {cat}
+                </div>
+                {menuOpen===cat&&(
+                  <div style={{background:"#f8f8f8",border:"1px solid #ccc",borderTop:"none"}}>
+                    {items.map(item=>(
+                      <div key={item} onClick={()=>runTcode(item.split("—")[0].trim())} style={{
+                        padding:"4px 20px",cursor:"pointer",fontSize:12,
+                        fontFamily:"Arial,sans-serif",color:"#000080",
+                        borderBottom:"1px solid #eee"
+                      }}
+                        onMouseEnter={e=>e.currentTarget.style.background="#ddeeff"}
+                        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                        📄 {item}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div style={{marginTop:16,padding:10,background:"#fffff0",border:"1px solid #cccc00",fontSize:11,fontFamily:"Arial,sans-serif",color:"#666"}}>
+              💡 Tip: Type a T-code in the command field above and press Enter to navigate directly to any transaction.
+            </div>
+          </div>
+        </div>
+      );
+
+      // FB50 — GL POSTING
+      const FB50Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Enter G/L Account Document: Company Code AE01
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,margin:8,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Document {docNumber} was posted in company code AE01</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Posting Date: {docData.postdate||new Date().toLocaleDateString()} | Currency: {docData.currency||"AED"}</div>
+              <div style={{marginTop:8,display:"flex",gap:8}}>
+                <button style={btnStyle} onClick={()=>{setPosted(false);setDocData({});}}>New Document</button>
+                <button style={btnStyle} onClick={()=>runTcode("FB03")}>Display Document</button>
+              </div>
+            </div>
+          ):(
+            <div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Document Header</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Document Date","docdate","01.06.2024"],
+                    ["Posting Date","postdate","01.06.2024"],
+                    ["Document Type","doctype","SA"],
+                    ["Company Code","compcode","AE01"],
+                    ["Currency","currency","AED"],
+                    ["Reference","ref","JV-2024-001"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>G/L Account Line Items</div>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"Arial,sans-serif"}}>
+                  <thead>
+                    <tr style={{background:"#003399",color:"#fff"}}>
+                      {["PK","G/L Account","Amount","Tax","Cost Center","Description"].map(h=>(
+                        <th key={h} style={{padding:"3px 6px",textAlign:"left",border:"1px solid #5577aa"}}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[0,1].map(i=>(
+                      <tr key={i} style={{background:i%2===0?"#ffffff":"#f5f5f5"}}>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:30}} placeholder={i===0?"40":"50"} value={docData[`pk${i}`]||""} onChange={e=>setDocData({...docData,[`pk${i}`]:e.target.value})}/></td>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:80}} placeholder={i===0?"400100":"113100"} value={docData[`acc${i}`]||""} onChange={e=>setDocData({...docData,[`acc${i}`]:e.target.value})}/></td>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:80}} placeholder={i===0?"5,000":"5,000"} value={docData[`amt${i}`]||""} onChange={e=>setDocData({...docData,[`amt${i}`]:e.target.value})}/></td>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:40}} placeholder="V5" value={docData[`tax${i}`]||""} onChange={e=>setDocData({...docData,[`tax${i}`]:e.target.value})}/></td>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:70}} placeholder="CC-1001" value={docData[`cc${i}`]||""} onChange={e=>setDocData({...docData,[`cc${i}`]:e.target.value})}/></td>
+                        <td style={{border:"1px solid #ccc",padding:2}}><input style={{...fieldStyle,width:120}} placeholder={i===0?"Office Supplies":"Bank Account"} value={docData[`desc${i}`]||""} onChange={e=>setDocData({...docData,[`desc${i}`]:e.target.value})}/></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{display:"flex",gap:6,padding:"4px 0"}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff",border:"2px outset #0044cc"}} onClick={postDocument}>Post (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>{setDocData({});showNotif("Document cleared");}}>Reset</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // FB60 — VENDOR INVOICE
+      const FB60Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Enter Vendor Invoice: Company Code AE01
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Document {docNumber} posted in company code AE01</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Vendor: {docData.vendor||"V-10045"} | Amount: AED {docData.amount||"0"}</div>
+              <button style={{...btnStyle,marginTop:8}} onClick={()=>{setPosted(false);setDocData({});}}>New Invoice</button>
+            </div>
+          ):(
+            <div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Basic Data</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Vendor","vendor","V-10045"],
+                    ["Invoice Date","invdate","01.06.2024"],
+                    ["Posting Date","postdate","01.06.2024"],
+                    ["Amount","amount","15750"],
+                    ["Currency","currency","AED"],
+                    ["Tax Amount","taxamt","787.50"],
+                    ["Tax Code","taxcode","V5"],
+                    ["Payment Terms","payterms","ZB30"],
+                    ["Reference","ref","INV-2024-445"],
+                    ["Document Type","doctype","KR"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>GL Account Assignment</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[["GL Account","glacc","400100"],["Amount","glacamt","15750"],["Cost Center","costcenter","CC-1001"],["Description","gldesc","Office Equipment"]].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff",border:"2px outset #0044cc"}} onClick={postDocument}>Post (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // FB70 — CUSTOMER INVOICE
+      const FB70Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Enter Customer Invoice: Company Code AE01
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Document {docNumber} posted in company code AE01</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Customer: {docData.customer||"C-20088"} | Amount: AED {docData.amount||"0"}</div>
+              <button style={{...btnStyle,marginTop:8}} onClick={()=>{setPosted(false);setDocData({});}}>New Invoice</button>
+            </div>
+          ):(
+            <div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Basic Data</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Customer","customer","C-20088"],
+                    ["Invoice Date","invdate","01.06.2024"],
+                    ["Posting Date","postdate","01.06.2024"],
+                    ["Amount","amount","22000"],
+                    ["Currency","currency","AED"],
+                    ["Tax Code","taxcode","A5"],
+                    ["Payment Terms","payterms","ZB45"],
+                    ["Reference","ref","INV-OUT-2024-001"],
+                    ["Document Type","doctype","DR"],
+                    ["Revenue Account","revacc","800100"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff",border:"2px outset #0044cc"}} onClick={postDocument}>Post (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // FBL1N — VENDOR LINE ITEMS
+      const FBL1NScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Vendor Line Item Display
+          </div>
+          <div style={sectionStyle}>
+            <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center",marginBottom:8}}>
+              {[["Vendor Account","V-10045"],["Company Code","AE01"],["Open Items","●"],["Cleared Items","○"]].map(([l,v])=>(
+                <React.Fragment key={l}><div style={labelStyle}>{l}:</div><input style={fieldStyle} defaultValue={v}/></React.Fragment>
+              ))}
+            </div>
+            <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={()=>showNotif("Executing report...")}>Execute (F8)</button>
+          </div>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,fontFamily:"Arial,sans-serif"}}>
+            <thead>
+              <tr style={{background:"#003399",color:"#fff"}}>
+                {["St","Doc.No","Type","Date","Due Date","Amount","Currency","Description"].map(h=>(
+                  <th key={h} style={{padding:"3px 6px",textAlign:"left",border:"1px solid #5577aa"}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["","1900045","KR","01.06.2024","01.07.2024","15,750.00","AED","Office Equipment"],
+                ["","1900046","KR","05.06.2024","05.07.2024","8,250.00","AED","IT Services"],
+                ["✓","1900040","KR","01.05.2024","01.06.2024","12,000.00","AED","Maintenance"],
+              ].map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?"#ffffff":"#f5f5f5"}}>
+                  {row.map((cell,j)=>(
+                    <td key={j} style={{padding:"3px 6px",border:"1px solid #ddd",color:j===0?"#009900":j===4&&new Date()>new Date("2024-07-01")?"#cc0000":"#000"}}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{padding:"4px 0",fontSize:11,fontFamily:"Arial,sans-serif",color:"#666"}}>3 items displayed | Total open: AED 24,000.00</div>
+        </div>
+      );
+
+      // F110 — PAYMENT PROGRAM
+      const F110Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Automatic Payment Transactions: Parameters
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Payment run completed</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>3 invoices paid | Total: AED 48,250 | Bank: ADCB01</div>
+              <div style={{marginTop:8,fontSize:11,color:"#666"}}>Payment documents posted. Bank file generated. Payment advices sent to vendors.</div>
+            </div>
+          ):(
+            <div>
+              <div style={sectionStyle}>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Run Date","rundate","01.07.2024"],
+                    ["Identification","idkey","PAY-JULY-01"],
+                    ["Company Codes","compcode","AE01"],
+                    ["Paying Company","paycomp","AE01"],
+                    ["Payment Methods","paymethod","T"],
+                    ["Next Pay Date","nextdate","08.07.2024"],
+                    ["Vendor (From)","vendfrom","V-10000"],
+                    ["Vendor (To)","vendto","V-99999"],
+                    ["House Bank","bank","ADCB01"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={{background:"#fffff0",border:"1px solid #cccc00",padding:8,fontSize:11,fontFamily:"Arial,sans-serif",marginBottom:8}}>
+                <strong>Steps:</strong> 1. Save Parameters → 2. Proposal → 3. Payment Run → 4. Print
+              </div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                <button style={btnStyle} onClick={()=>showNotif("Parameters saved")}>Save Parameters</button>
+                <button style={btnStyle} onClick={()=>showNotif("Proposal created: 3 items, AED 48,250")}>Run Proposal</button>
+                <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={postDocument}>Payment Run</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // KS01 — COST CENTER
+      const KS01Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Create Cost Center: Master Data
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Cost Center {docData.cccode||"CC-1001"} created</div>
+              <button style={{...btnStyle,marginTop:8}} onClick={()=>{setPosted(false);setDocData({});}}>Create Another</button>
+            </div>
+          ):(
+            <div>
+              <div style={sectionStyle}>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Cost Center","cccode","CC-1001"],
+                    ["Valid From","validfrom","01.01.2024"],
+                    ["Controlling Area","ctrlarea","AE01"],
+                    ["Name","ccname","Finance Department"],
+                    ["Description","ccdesc","Finance & Accounting"],
+                    ["Cost Center Category","cccategory","F"],
+                    ["Hierarchy Area","hierarchy","CORP"],
+                    ["Company Code","compcode","AE01"],
+                    ["Profit Center","profitcenter","PC-FIN"],
+                    ["Responsible Person","responsible","Kulsoom"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={postDocument}>Save (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // Financial Statements Report
+      const FinStatementsScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Financial Statements: Selection Screen
+          </div>
+          <div style={sectionStyle}>
+            <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center",marginBottom:8}}>
+              {[["Company Code","AE01"],["Fiscal Year","2024"],["Reporting Period","1 to 6"],["FSV","GULF-FSV"]].map(([l,v])=>(
+                <React.Fragment key={l}><div style={labelStyle}>{l}:</div><input style={fieldStyle} defaultValue={v}/></React.Fragment>
+              ))}
+            </div>
+            <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={()=>showNotif("Report executing...")}>Execute (F8)</button>
+          </div>
+          <div style={{background:"#fff",border:"1px solid #999",padding:12,fontFamily:"Courier New,monospace",fontSize:12}}>
+            <div style={{textAlign:"center",fontWeight:"bold",marginBottom:8}}>Gulf Trading LLC — Financial Statements 2024</div>
+            <div style={{textAlign:"center",marginBottom:12}}>Period: January to June 2024 | Currency: AED</div>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <tbody>
+                {[
+                  ["ASSETS","",""],
+                  ["Current Assets","",""],
+                  ["  Bank Accounts","113100","1,245,000"],
+                  ["  Accounts Receivable","130000","380,000"],
+                  ["  Inventory","140000","125,000"],
+                  ["Fixed Assets","",""],
+                  ["  Property & Equipment","200000","2,850,000"],
+                  ["  Accumulated Depreciation","210000","-450,000"],
+                  ["TOTAL ASSETS","","4,150,000"],
+                  ["","",""],
+                  ["LIABILITIES","",""],
+                  ["  Accounts Payable","210000","245,000"],
+                  ["  Accrued Liabilities","220000","85,000"],
+                  ["EQUITY","",""],
+                  ["  Share Capital","300000","3,000,000"],
+                  ["  Retained Earnings","320000","820,000"],
+                  ["TOTAL LIABILITIES & EQUITY","","4,150,000"],
+                ].map(([label,acc,amt],i)=>(
+                  <tr key={i} style={{borderBottom:label.includes("TOTAL")?"2px solid #000":"none"}}>
+                    <td style={{padding:"2px 4px",fontWeight:label===label.toUpperCase()&&label?"bold":"normal",paddingLeft:label.startsWith("  ")?"20px":"4px"}}>{label}</td>
+                    <td style={{padding:"2px 4px",color:"#666"}}>{acc}</td>
+                    <td style={{padding:"2px 4px",textAlign:"right",fontWeight:label.includes("TOTAL")?"bold":"normal"}}>{amt}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+
+      // Default screen
+      const DefaultScreen=({tc})=>(
+        <div style={{flex:1,background:sapBg,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{textAlign:"center",fontFamily:"Arial,sans-serif"}}>
+            <div style={{fontSize:48,marginBottom:12}}>🖥️</div>
+            <div style={{color:"#003399",fontSize:16,fontWeight:"bold"}}>{tc} — Coming Soon</div>
+            <div style={{color:"#666",fontSize:13,marginTop:6}}>This screen is being built. Use the menu to navigate to available transactions.</div>
+            <button style={{...btnStyle,marginTop:12}} onClick={()=>setScreen("easymenu")}>← Easy Access Menu</button>
+          </div>
+        </div>
+      );
+
+      const screenMap={
+        "easymenu":<EasyMenu/>,
+        "gl_posting":<FB50Screen/>,
+        "vendor_invoice":<FB60Screen/>,
+        "customer_invoice":<FB70Screen/>,
+        "vendor_lineitems":<FBL1NScreen/>,
+        "payment_program":<F110Screen/>,
+        "cost_center":<KS01Screen/>,
+        "fin_statements":<FinStatementsScreen/>,
+      };
+
+      return (
+        <div style={{maxWidth:1000,margin:"0 auto"}}>
+          <div style={{marginBottom:12}}>
+            <h2 style={{color:"#f1f5f9",margin:"0 0 4px",fontSize:22}}>🖥️ SAP GUI Practice System</h2>
+            <p style={{color:"#64748b",fontSize:13,margin:0}}>Real SAP screen look & feel — navigate menus, fill forms, post documents!</p>
+          </div>
+
+          {/* SAP GUI Window */}
+          <div style={{border:"3px solid #666",borderRadius:4,overflow:"hidden",boxShadow:"4px 4px 12px #00000088"}}>
+
+            {/* Title Bar */}
+            <div style={{background:"linear-gradient(180deg,#1a5276,#003399)",padding:"4px 8px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <div style={{color:"#fff",fontSize:12,fontFamily:"Arial,sans-serif",fontWeight:"bold"}}>
+                SAP Easy Access — FICO Academy Gulf Practice System
+              </div>
+              <div style={{display:"flex",gap:4}}>
+                {["_","□","✕"].map(b=>(
+                  <div key={b} style={{background:"#cccccc",border:"1px solid #888",width:16,height:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,cursor:"pointer",fontFamily:"Arial,sans-serif"}}>{b}</div>
+                ))}
+              </div>
+            </div>
+
+            {/* Menu Bar */}
+            <div style={{background:"#d4d4d4",padding:"2px 4px",display:"flex",gap:2,borderBottom:"1px solid #999"}}>
+              {["System","Edit","Favorites","Extras","Help"].map(m=>(
+                <div key={m} style={{padding:"2px 8px",fontSize:12,cursor:"pointer",fontFamily:"Arial,sans-serif",color:"#000080"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#b8d4f0"}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{m}</div>
+              ))}
+            </div>
+
+            {/* Toolbar */}
+            <div style={{background:"#e8e8e8",padding:"3px 6px",display:"flex",alignItems:"center",gap:6,borderBottom:"1px solid #aaa"}}>
+              {/* Command field */}
+              <div style={{display:"flex",alignItems:"center",gap:4}}>
+                <input value={tcodeInput} onChange={e=>setTcodeInput(e.target.value)}
+                  onKeyDown={e=>e.key==="Enter"&&runTcode(tcodeInput)}
+                  placeholder="T-Code" style={{...fieldStyle,width:100,fontSize:12,padding:"2px 6px",border:"2px inset #999"}}/>
+                <button style={{...btnStyle,padding:"2px 8px",fontSize:11}} onClick={()=>runTcode(tcodeInput)}>✓</button>
+              </div>
+
+              {/* Navigation buttons */}
+              <div style={{display:"flex",gap:2}}>
+                {[["◀","Back",()=>setScreen("easymenu")],["▶","Forward",()=>{}],["🏠","Home",()=>setScreen("easymenu")]].map(([icon,title,fn])=>(
+                  <button key={title} title={title} style={{...btnStyle,padding:"2px 6px",fontSize:11}} onClick={fn}>{icon}</button>
+                ))}
+              </div>
+
+              {/* History */}
+              {history.length>0&&(
+                <div style={{display:"flex",gap:4,alignItems:"center"}}>
+                  <span style={{fontSize:10,color:"#666",fontFamily:"Arial,sans-serif"}}>Recent:</span>
+                  {history.map(h=>(
+                    <button key={h} onClick={()=>runTcode(h)} style={{...btnStyle,padding:"1px 6px",fontSize:10,background:"#e0e8ff",color:"#003399"}}>{h}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Notification bar */}
+            {notification&&(
+              <div style={{background:notification.includes("posted")||notification.includes("created")?"#ccffcc":"#ffffcc",borderBottom:"1px solid #999",padding:"3px 8px",fontSize:12,fontFamily:"Arial,sans-serif",color:notification.includes("posted")||notification.includes("created")?"#006600":"#666600"}}>
+                ℹ️ {notification}
+              </div>
+            )}
+
+            {/* Main content area */}
+            <div style={{display:"flex",minHeight:420,background:sapBg}}>
+              {screenMap[screen]||<DefaultScreen tc={tcode}/>}
+            </div>
+
+            {/* Status bar */}
+            <div style={{background:"#d4d4d4",borderTop:"1px solid #999",padding:"2px 8px",display:"flex",justifyContent:"space-between",fontSize:11,fontFamily:"Arial,sans-serif",color:"#333"}}>
+              <div>System: FICO-ACADEMY | Client: 100 | User: KULSOOM</div>
+              <div>Transaction: {tcode||"S000"} | {new Date().toLocaleTimeString()}</div>
+            </div>
+          </div>
+
+          {/* Available Screens Guide */}
+          <div style={{marginTop:16,background:"#1e293b",border:"1px solid #334155",borderRadius:12,padding:16}}>
+            <div style={{color:"#94a3b8",fontWeight:700,fontSize:12,marginBottom:12,textTransform:"uppercase",letterSpacing:1}}>📋 Available Transactions — Type in Command Field</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:8}}>
+              {[
+                {tc:"FB50",desc:"GL Journal Entry",color:"#3b82f6"},
+                {tc:"FB60",desc:"Vendor Invoice",color:"#f59e0b"},
+                {tc:"FB70",desc:"Customer Invoice",color:"#ef4444"},
+                {tc:"FBL1N",desc:"Vendor Line Items",color:"#f59e0b"},
+                {tc:"F110",desc:"Payment Program",color:"#f59e0b"},
+                {tc:"KS01",desc:"Create Cost Center",color:"#8b5cf6"},
+                {tc:"S_ALR_87012284",desc:"Financial Statements",color:"#22c55e"},
+              ].map(t=>(
+                <div key={t.tc} onClick={()=>runTcode(t.tc)} style={{
+                  background:"#0f172a",border:`1px solid ${t.color}33`,
+                  borderRadius:8,padding:"8px 12px",cursor:"pointer",
+                  display:"flex",gap:8,alignItems:"center",transition:"all 0.15s"
+                }}
+                  onMouseEnter={e=>{e.currentTarget.style.border=`1px solid ${t.color}88`;e.currentTarget.style.background="#1e293b";}}
+                  onMouseLeave={e=>{e.currentTarget.style.border=`1px solid ${t.color}33`;e.currentTarget.style.background="#0f172a";}}>
+                  <div style={{background:t.color+"22",color:t.color,borderRadius:6,padding:"2px 6px",fontSize:10,fontWeight:800,flexShrink:0}}>{t.tc}</div>
+                  <div style={{color:"#94a3b8",fontSize:11}}>{t.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function App(){
       const [user,setUser]=useState(()=>getSession());
       const [view,setView]=useState("home");
