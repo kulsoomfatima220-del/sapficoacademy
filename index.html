@@ -2876,8 +2876,9 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
 
       const navItems=[
         {id:"home",icon:"🏠",label:"Dashboard"},
+        {id:"sapgui",icon:"🖥️",label:"SAP GUI"},
         {id:"glconfig",icon:"⚙️",label:"GL Config"},
-        {id:"simulator",icon:"🖥️",label:"Simulator"},
+        {id:"simulator",icon:"📝",label:"Simulator"},
         {id:"interview",icon:"🎤",label:"Interview"},
         {id:"cases",icon:"🔬",label:"Case Studies"},
         {id:"resources",icon:"📚",label:"Resources"},
@@ -2983,6 +2984,8 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
             </div>
           </div>
         );
+      }else if(view==="sapgui"){
+        mainContent=<SAPGuiSim/>;
       }else if(view==="resources"){
         mainContent=<ResourcesPage/>;
       }else if(view==="glconfig"){
