@@ -2250,14 +2250,22 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
         "AFAB":"depreciation",
         "S_ALR_87012284":"fin_statements",
         "FB03":"display_doc",
+        "FB08":"reverse_doc",
+        "MIRO":"miro",
+        "MIGO":"migo",
+        "AW01N":"asset_explorer",
+        "MONTH_END":"month_end",
+        "SHORTCUTS":"shortcuts",
       };
 
       const menuItems={
-        "Favorites":["FB50 — GL Account Posting","FB60 — Vendor Invoice","FB70 — Customer Invoice","F110 — Payment Program"],
-        "Financial Accounting":["FB50 — Enter GL Account Document","FB03 — Display Document","FB60 — Vendor Invoice","FB70 — Customer Invoice","FBL1N — Vendor Line Items","FBL5N — Customer Line Items"],
+        "Favorites":["FB50 — GL Account Posting","FB60 — Vendor Invoice","FB70 — Customer Invoice","F110 — Payment Program","MIRO — Invoice Verification","MIGO — Goods Receipt"],
+        "Financial Accounting":["FB50 — Enter GL Account Document","FB03 — Display Document","FB08 — Reverse Document","FB60 — Vendor Invoice","FB70 — Customer Invoice","FBL1N — Vendor Line Items","FBL5N — Customer Line Items"],
+        "MM Integration":["MIGO — Goods Receipt","MIRO — Invoice Verification"],
         "Controlling":["KS01 — Create Cost Center","KP06 — Cost Center Planning","KSB1 — Cost Center Line Items"],
         "Asset Accounting":["AS01 — Create Asset Master","AFAB — Post Depreciation","AW01N — Asset Explorer"],
         "Reports":["S_ALR_87012284 — Financial Statements","S_ALR_87013611 — Cost Center Report"],
+        "Tools":["MONTH_END — Month-End Closing Checklist","SHORTCUTS — SAP Keyboard Shortcuts"],
       };
 
       function runTcode(tc){
@@ -2716,9 +2724,451 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
           <div style={{textAlign:"center",fontFamily:"Arial,sans-serif"}}>
             <div style={{fontSize:48,marginBottom:12}}>🖥️</div>
             <div style={{color:"#003399",fontSize:16,fontWeight:"bold"}}>{tc} — Coming Soon</div>
-            <div style={{color:"#666",fontSize:13,marginTop:6}}>This screen is being built. Use the menu to navigate to available transactions.</div>
+            <div style={{color:"#666",fontSize:13,marginTop:6}}>Use the menu to navigate to available transactions.</div>
             <button style={{...btnStyle,marginTop:12}} onClick={()=>setScreen("easymenu")}>← Easy Access Menu</button>
           </div>
+        </div>
+      );
+
+      // MIRO — INVOICE VERIFICATION
+      const MIROScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Enter Incoming Invoice (MIRO) — Company Code AE01
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Document {docNumber} posted in company code AE01</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Invoice verified against PO {docData.po||"4500012345"}. 3-way match successful.</div>
+              <div style={{color:"#444",fontSize:12}}>Vendor: {docData.vendor||"V-10045"} | Amount: AED {docData.amount||"0"} | Tax: AED {docData.taxamt||"0"}</div>
+              <button style={{...btnStyle,marginTop:8}} onClick={()=>{setPosted(false);setDocData({});}}>New Invoice</button>
+            </div>
+          ):(
+            <div>
+              <div style={{background:"#fff3cd",border:"1px solid #ffc107",padding:6,marginBottom:8,fontSize:11,fontFamily:"Arial,sans-serif"}}>
+                ℹ️ MIRO is used for 3-way match: Purchase Order → Goods Receipt → Invoice Verification
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Basic Data</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Transaction","trans","Invoice"],
+                    ["Invoice Date","invdate","01.06.2024"],
+                    ["Posting Date","postdate","01.06.2024"],
+                    ["Amount","amount","125000"],
+                    ["Currency","currency","SAR"],
+                    ["Tax Amount","taxamt","18750"],
+                    ["Tax Code","taxcode","V5"],
+                    ["Reference","ref","INV-VENDOR-445"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>PO Reference</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[["Purchase Order","po","4500012345"],["PO Item","poitem","10"],["Vendor","vendor","V-10045"],["GR Document","grdoc","5000012345"]].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Item Details</div>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"Arial,sans-serif"}}>
+                  <thead>
+                    <tr style={{background:"#003399",color:"#fff"}}>
+                      {["Item","PO Qty","GR Qty","Invoice Qty","Amount","Variance"].map(h=>(
+                        <th key={h} style={{padding:"3px 6px",border:"1px solid #5577aa"}}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{background:"#ffffff"}}>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd"}}>10</td>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd"}}>500</td>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd"}}>500</td>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd"}}><input style={{...fieldStyle,width:60}} placeholder="500"/></td>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd"}}><input style={{...fieldStyle,width:80}} placeholder="125,000"/></td>
+                      <td style={{padding:"3px 6px",border:"1px solid #ddd",color:"#009900"}}>0.00 ✓</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{background:"#e8f4f8",border:"1px solid #007bcc",padding:8,marginBottom:8,fontSize:11,fontFamily:"Arial,sans-serif"}}>
+                <strong style={{color:"#003399"}}>3-Way Match Status:</strong> ✅ PO matched | ✅ GR matched | ⏳ Invoice pending post
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={postDocument}>Post (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>showNotif("Invoice simulated — no posting")}>Simulate</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // MIGO — GOODS RECEIPT
+      const MIGOScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Goods Receipt (MIGO) — Company Code AE01
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Material Document {docNumber} posted</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Goods Receipt for PO {docData.po||"4500012345"} posted successfully.</div>
+              <div style={{color:"#444",fontSize:12}}>FI Document created automatically: Debit Inventory / Credit GR-IR Clearing</div>
+              <button style={{...btnStyle,marginTop:8}} onClick={()=>{setPosted(false);setDocData({});}}>New GR</button>
+            </div>
+          ):(
+            <div>
+              <div style={{background:"#fff3cd",border:"1px solid #ffc107",padding:6,marginBottom:8,fontSize:11,fontFamily:"Arial,sans-serif"}}>
+                ℹ️ MIGO posts Goods Receipt. SAP automatically creates FI document: Dr Inventory / Cr GR-IR Clearing
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Header Data</div>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Transaction","trans","Goods Receipt"],
+                    ["Reference Doc","refdoc","Purchase Order"],
+                    ["PO Number","po","4500012345"],
+                    ["Doc Date","docdate","01.06.2024"],
+                    ["Posting Date","postdate","01.06.2024"],
+                    ["Delivery Note","delnote","DN-2024-001"],
+                    ["Bill of Lading","bol","BL-2024-001"],
+                    ["Header Text","headertext","Goods received from vendor"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionStyle}>
+                <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Item Details</div>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"Arial,sans-serif"}}>
+                  <thead>
+                    <tr style={{background:"#003399",color:"#fff"}}>
+                      {["Item","Material","Description","PO Qty","Rec Qty","UoM","Plant","Storage Loc","Mvt Type"].map(h=>(
+                        <th key={h} style={{padding:"3px 4px",border:"1px solid #5577aa",fontSize:10}}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{background:"#ffffff"}}>
+                      <td style={{padding:"3px 4px",border:"1px solid #ddd"}}>1</td>
+                      <td style={{border:"1px solid #ddd",padding:2}}><input style={{...fieldStyle,width:70}} placeholder="MAT-1001"/></td>
+                      <td style={{border:"1px solid #ddd",padding:2}}><input style={{...fieldStyle,width:100}} placeholder="Drilling Sensors"/></td>
+                      <td style={{padding:"3px 4px",border:"1px solid #ddd"}}>500</td>
+                      <td style={{border:"1px solid #ddd",padding:2}}><input style={{...fieldStyle,width:50}} placeholder="500"/></td>
+                      <td style={{padding:"3px 4px",border:"1px solid #ddd"}}>EA</td>
+                      <td style={{border:"1px solid #ddd",padding:2}}><input style={{...fieldStyle,width:50}} placeholder="AE01"/></td>
+                      <td style={{border:"1px solid #ddd",padding:2}}><input style={{...fieldStyle,width:50}} placeholder="0001"/></td>
+                      <td style={{padding:"3px 4px",border:"1px solid #ddd",color:"#003399",fontWeight:"bold"}}>101</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div style={{marginTop:6,fontSize:11,color:"#666"}}>Movement Type 101 = Goods Receipt for Purchase Order</div>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={postDocument}>Post (Ctrl+S)</button>
+                <button style={btnStyle} onClick={()=>showNotif("Check document — no posting")}>Check</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // FB03 — DISPLAY DOCUMENT
+      const FB03Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Display Document: Initial Screen
+          </div>
+          <div style={sectionStyle}>
+            <div style={{color:"#003399",fontSize:12,fontWeight:"bold",marginBottom:6,fontFamily:"Arial,sans-serif"}}>Document Selection</div>
+            <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center",marginBottom:8}}>
+              {[["Document Number","docnum","1900045"],["Company Code","compcode","AE01"],["Fiscal Year","year","2024"]].map(([l,k,ph])=>(
+                <React.Fragment key={k}>
+                  <div style={labelStyle}>{l}:</div>
+                  <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                </React.Fragment>
+              ))}
+            </div>
+            <button style={{...btnStyle,background:"#003399",color:"#fff"}} onClick={()=>showNotif("Displaying document "+( docData.docnum||"1900045"))}>Display Document</button>
+          </div>
+          <div style={{background:"#fff",border:"1px solid #999",padding:12,fontFamily:"Arial,sans-serif",fontSize:12}}>
+            <div style={{fontWeight:"bold",marginBottom:8,color:"#003399"}}>Document Header — Document {docData.docnum||"1900045"}</div>
+            <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",marginBottom:12}}>
+              {[
+                ["Document Date","01.06.2024"],["Posting Date","01.06.2024"],
+                ["Document Type","KR — Vendor Invoice"],["Company Code","AE01"],
+                ["Currency","AED"],["Reference","INV-2024-445"],
+                ["Created By","KULSOOM"],["Created On","01.06.2024"],
+              ].map(([l,v])=>(
+                <React.Fragment key={l}>
+                  <div style={{color:"#000080",fontWeight:"bold",fontSize:11}}>{l}:</div>
+                  <div style={{fontSize:11,color:"#333"}}>{v}</div>
+                </React.Fragment>
+              ))}
+            </div>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+              <thead>
+                <tr style={{background:"#003399",color:"#fff"}}>
+                  {["Itm","PK","Account","Description","Amount","Currency","Cost Ctr"].map(h=>(
+                    <th key={h} style={{padding:"3px 6px",border:"1px solid #5577aa"}}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["001","31","V-10045","Techno Gulf LLC","-15,750.00","AED",""],
+                  ["002","40","400100","Office Equipment Expense","15,000.00","AED","CC-1001"],
+                  ["003","40","175000","Input VAT 5%","750.00","AED",""],
+                ].map((row,i)=>(
+                  <tr key={i} style={{background:i%2===0?"#ffffff":"#f5f5f5"}}>
+                    {row.map((cell,j)=>(
+                      <td key={j} style={{padding:"3px 6px",border:"1px solid #ddd",color:j===3&&cell.includes("-")?"#cc0000":"#000"}}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div style={{marginTop:8,padding:6,background:"#f0f8f0",border:"1px solid #009900",fontSize:11}}>
+              ✅ Document balanced | Debit: 15,750.00 | Credit: 15,750.00
+            </div>
+          </div>
+          <div style={{display:"flex",gap:6,marginTop:8}}>
+            <button style={btnStyle} onClick={()=>runTcode("FB08")}>Reverse Document</button>
+            <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+          </div>
+        </div>
+      );
+
+      // FB08 — REVERSE DOCUMENT
+      const FB08Screen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Reverse Document: FB08
+          </div>
+          {posted?(
+            <div style={{background:"#ccffcc",border:"2px solid #009900",padding:12,fontFamily:"Arial,sans-serif"}}>
+              <div style={{color:"#006600",fontWeight:"bold",fontSize:14}}>✅ Reversal Document {docNumber} posted</div>
+              <div style={{color:"#444",fontSize:12,marginTop:4}}>Original document {docData.docnum||"1900045"} has been reversed. Net balance = 0.</div>
+            </div>
+          ):(
+            <div>
+              <div style={{background:"#ffe0e0",border:"1px solid #cc0000",padding:6,marginBottom:8,fontSize:11,fontFamily:"Arial,sans-serif"}}>
+                ⚠️ Reversing a document creates a counter-entry. The original document remains in the system — SAP never deletes documents!
+              </div>
+              <div style={sectionStyle}>
+                <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center"}}>
+                  {[
+                    ["Document Number","docnum","1900045"],
+                    ["Company Code","compcode","AE01"],
+                    ["Fiscal Year","year","2024"],
+                    ["Reversal Reason","reason","01"],
+                    ["Posting Date","postdate",new Date().toLocaleDateString()],
+                    ["Posting Period","period","06"],
+                  ].map(([l,k,ph])=>(
+                    <React.Fragment key={k}>
+                      <div style={labelStyle}>{l}:</div>
+                      <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div style={{background:"#f5f5f5",border:"1px solid #ccc",padding:8,marginBottom:8,fontSize:11,fontFamily:"Arial,sans-serif"}}>
+                <strong>Reversal Reason Codes:</strong><br/>
+                01 = Reversal in current period | 02 = Reversal in previous period | 03 = Accrual/Deferral reversal
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button style={{...btnStyle,background:"#cc0000",color:"#fff"}} onClick={postDocument}>Post Reversal</button>
+                <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // AW01N — ASSET EXPLORER
+      const AW01NScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            Asset Explorer: AW01N
+          </div>
+          <div style={sectionStyle}>
+            <div style={{display:"grid",gridTemplateColumns:"auto 1fr auto 1fr",gap:"4px 12px",alignItems:"center",marginBottom:8}}>
+              {[["Asset","asset","10000001"],["Sub-number","subnumber","0"],["Company Code","compcode","AE01"],["Fiscal Year","year","2024"]].map(([l,k,ph])=>(
+                <React.Fragment key={k}>
+                  <div style={labelStyle}>{l}:</div>
+                  <input style={fieldStyle} value={docData[k]||""} placeholder={ph} onChange={e=>setDocData({...docData,[k]:e.target.value})}/>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+          <div style={{background:"#fff",border:"1px solid #999",padding:12,fontFamily:"Arial,sans-serif",fontSize:12}}>
+            <div style={{fontWeight:"bold",color:"#003399",marginBottom:8}}>Asset {docData.asset||"10000001"} — Boeing 777 Aircraft</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+              <div style={{background:"#f0f8ff",border:"1px solid #cce",padding:8}}>
+                <div style={{fontWeight:"bold",color:"#003399",marginBottom:4"}}>Asset Values (AED)</div>
+                {[["Acquisition Value","1,200,000,000"],["Accumulated Depreciation","40,000,000"],["Net Book Value","1,160,000,000"],["Unplanned Depreciation","85,000,000"],["Current NBV","1,075,000,000"]].map(([l,v])=>(
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #eee",padding:"2px 0"}}>
+                    <span style={{color:"#333",fontSize:11}}>{l}</span>
+                    <span style={{fontWeight:"bold",color:l.includes("NBV")?"#003399":"#000"}}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{background:"#f0f8ff",border:"1px solid #cce",padding:8}}>
+                <div style={{fontWeight:"bold",color:"#003399",marginBottom:4}}>Master Data</div>
+                {[["Asset Class","1000 — Aircraft"],["Depreciation Key","LINR — Straight Line"],["Useful Life","25 years"],["Acquisition Date","01.01.2024"],["Cost Center","Flight Operations"]].map(([l,v])=>(
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",borderBottom:"1px solid #eee",padding:"2px 0"}}>
+                    <span style={{color:"#333",fontSize:11}}>{l}</span>
+                    <span style={{fontWeight:"bold",fontSize:11}}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{fontWeight:"bold",color:"#003399",marginBottom:6}}>Depreciation Schedule 2024</div>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+              <thead>
+                <tr style={{background:"#003399",color:"#fff"}}>
+                  {["Period","Planned Dep","Posted Dep","Unplanned","Cumulative"].map(h=>(
+                    <th key={h} style={{padding:"3px 6px",border:"1px solid #5577aa"}}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[1,2,3,4,5,6].map(p=>(
+                  <tr key={p} style={{background:p%2===0?"#f5f5f5":"#fff"}}>
+                    <td style={{padding:"3px 6px",border:"1px solid #ddd"}}>{p}</td>
+                    <td style={{padding:"3px 6px",border:"1px solid #ddd"}}>4,000,000</td>
+                    <td style={{padding:"3px 6px",border:"1px solid #ddd",color:"#009900"}}>4,000,000</td>
+                    <td style={{padding:"3px 6px",border:"1px solid #ddd",color:p===3?"#cc0000":"#000"}}>{p===3?"85,000,000":"0"}</td>
+                    <td style={{padding:"3px 6px",border:"1px solid #ddd",fontWeight:"bold"}}>{(p*4000000+(p>=3?85000000:0)).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button style={{...btnStyle,marginTop:8}} onClick={()=>setScreen("easymenu")}>Back</button>
+        </div>
+      );
+
+      // MONTH-END CLOSING CHECKLIST
+      const MonthEndScreen=()=>{
+        const [checks,setChecks]=useState({});
+        const checkItems=[
+          {id:"c1",tcode:"FB50",desc:"Post all outstanding journal entries",category:"GL",critical:true},
+          {id:"c2",tcode:"FAGL_FC_VAL",desc:"Run foreign currency revaluation",category:"GL",critical:true},
+          {id:"c3",tcode:"F.05",desc:"Post foreign currency valuation",category:"GL",critical:true},
+          {id:"c4",tcode:"AFAB",desc:"Execute depreciation run",category:"AA",critical:true},
+          {id:"c5",tcode:"F110",desc:"Run automatic payment program",category:"AP",critical:false},
+          {id:"c6",tcode:"F150",desc:"Run dunning program for overdue customers",category:"AR",critical:false},
+          {id:"c7",tcode:"F.13",desc:"Automatic clearing of open items",category:"GL",critical:true},
+          {id:"c8",tcode:"MR11",desc:"Clear GR/IR accounts",category:"MM",critical:true},
+          {id:"c9",tcode:"KSU5",desc:"Run cost center assessment cycles",category:"CO",critical:true},
+          {id:"c10",tcode:"KO88",desc:"Settle internal orders",category:"CO",critical:false},
+          {id:"c11",tcode:"FB50",desc:"Post accruals and prepayments",category:"GL",critical:true},
+          {id:"c12",tcode:"S_ALR_87012284",desc:"Run financial statements — verify trial balance",category:"GL",critical:true},
+          {id:"c13",tcode:"OB52",desc:"Close posting period for previous month",category:"GL",critical:true},
+          {id:"c14",tcode:"S_ALR_87013611",desc:"Run cost center variance report",category:"CO",critical:false},
+          {id:"c15",tcode:"F.07",desc:"Transfer customer/vendor balances",category:"AR/AP",critical:false},
+        ];
+        const done=Object.values(checks).filter(Boolean).length;
+        const critical=checkItems.filter(c=>c.critical);
+        const criticalDone=critical.filter(c=>checks[c.id]).length;
+        const catColors={GL:"#3b82f6",AA:"#06b6d4",AP:"#f59e0b",AR:"#ef4444",CO:"#8b5cf6",MM:"#22c55e","AR/AP":"#ec4899"};
+
+        return (
+          <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+            <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+              Month-End Closing Checklist — Period {new Date().getMonth()+1}/{new Date().getFullYear()}
+            </div>
+            {/* Progress */}
+            <div style={{background:"#fff",border:"1px solid #999",padding:10,marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:12}}>
+                <span style={{fontWeight:"bold",color:"#003399"}}>Closing Progress</span>
+                <span style={{color:done===checkItems.length?"#009900":"#cc6600",fontWeight:"bold"}}>{done}/{checkItems.length} tasks completed</span>
+              </div>
+              <div style={{background:"#eee",height:16,borderRadius:8,overflow:"hidden",border:"1px solid #ccc"}}>
+                <div style={{width:(done/checkItems.length*100)+"%",background:done===checkItems.length?"#009900":"#003399",height:"100%",transition:"width 0.3s"}}/>
+              </div>
+              <div style={{display:"flex",gap:16,marginTop:6,fontSize:11}}>
+                <span style={{color:"#cc0000"}}>⚠️ Critical: {criticalDone}/{critical.length}</span>
+                <span style={{color:"#666"}}>Optional: {done-criticalDone}/{checkItems.length-critical.length}</span>
+                {done===checkItems.length&&<span style={{color:"#009900",fontWeight:"bold"}}>✅ Period closing complete!</span>}
+              </div>
+            </div>
+            {/* Checklist */}
+            <div style={{background:"#fff",border:"1px solid #999",fontFamily:"Arial,sans-serif"}}>
+              <div style={{background:"#003399",color:"#fff",padding:"4px 8px",fontSize:12,fontWeight:"bold",display:"grid",gridTemplateColumns:"30px 60px 1fr 60px 60px"}}>
+                <span>✓</span><span>T-Code</span><span>Task Description</span><span>Module</span><span>Priority</span>
+              </div>
+              {checkItems.map((item,i)=>(
+                <div key={item.id} onClick={()=>setChecks({...checks,[item.id]:!checks[item.id]})} style={{
+                  display:"grid",gridTemplateColumns:"30px 60px 1fr 60px 60px",
+                  padding:"5px 8px",cursor:"pointer",fontSize:11,
+                  background:checks[item.id]?"#e8ffe8":i%2===0?"#ffffff":"#f5f5f5",
+                  borderBottom:"1px solid #eee",alignItems:"center"
+                }}>
+                  <span style={{fontSize:14,color:checks[item.id]?"#009900":"#ccc"}}>{checks[item.id]?"✅":"☐"}</span>
+                  <span style={{color:"#003399",fontWeight:"bold",fontSize:10}}>{item.tcode}</span>
+                  <span style={{color:checks[item.id]?"#666":"#000",textDecoration:checks[item.id]?"line-through":"none"}}>{item.desc}</span>
+                  <span style={{background:(catColors[item.category]||"#999")+"22",color:catColors[item.category]||"#999",borderRadius:4,padding:"1px 4px",fontSize:9,fontWeight:"bold",textAlign:"center"}}>{item.category}</span>
+                  <span style={{color:item.critical?"#cc0000":"#666",fontSize:10,fontWeight:item.critical?"bold":"normal"}}>{item.critical?"Critical":"Optional"}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:8,display:"flex",gap:6}}>
+              <button style={{...btnStyle,background:"#009900",color:"#fff"}} onClick={()=>{const all={};checkItems.forEach(c=>all[c.id]=true);setChecks(all);showNotif("All tasks marked complete!");}}>Mark All Done</button>
+              <button style={btnStyle} onClick={()=>{setChecks({});showNotif("Checklist reset");}}>Reset</button>
+              <button style={btnStyle} onClick={()=>setScreen("easymenu")}>Back</button>
+            </div>
+          </div>
+        );
+      };
+
+      // SAP KEYBOARD SHORTCUTS
+      const ShortcutsScreen=()=>(
+        <div style={{flex:1,background:sapBg,overflow:"auto",padding:8}}>
+          <div style={{background:"#003366",color:"#fff",padding:"4px 8px",fontSize:13,fontWeight:"bold",marginBottom:8,fontFamily:"Arial,sans-serif"}}>
+            SAP Keyboard Shortcuts — Quick Reference
+          </div>
+          <div style={{background:"#fff",border:"1px solid #999",padding:12,fontFamily:"Arial,sans-serif",fontSize:12}}>
+            {[
+              {category:"Navigation",shortcuts:[["Enter","Execute / Confirm"],["F3","Back (one step)"],["F4","Search Help / Value List"],["F5","Create new session"],["Ctrl+/","Close current transaction"],["Ctrl+N","Open new session"],]},
+              {category:"Document Processing",shortcuts:[["Ctrl+S","Save / Post document"],["Ctrl+F1","Help on field"],["F8","Execute report"],["Ctrl+P","Print"],["F9","Mark / Select item"],["Shift+F4","Delete line item"],]},
+              {category:"Editing",shortcuts:[["Ctrl+Z","Undo"],["Ctrl+C","Copy"],["Ctrl+V","Paste"],["Ctrl+X","Cut"],["Ctrl+A","Select all"],["Ctrl+F","Find"],]},
+              {category:"System",shortcuts:[["Alt+F12","Customize local layout"],["Ctrl+Shift+F11","Transaction history"],["F1","Help"],["F6","Create shortcut"],["Ctrl+Q","Log off"],["Shift+F9","Technical info"],]},
+            ].map(group=>(
+              <div key={group.category} style={{marginBottom:16}}>
+                <div style={{background:"#003399",color:"#fff",padding:"4px 8px",fontWeight:"bold",fontSize:12,marginBottom:4}}>{group.category}</div>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+                  <tbody>
+                    {group.shortcuts.map(([key,desc],i)=>(
+                      <tr key={key} style={{background:i%2===0?"#f5f5f5":"#fff"}}>
+                        <td style={{padding:"4px 8px",border:"1px solid #ddd",width:"30%"}}>
+                          <span style={{background:"#e0e0e0",border:"1px solid #999",borderRadius:3,padding:"2px 6px",fontFamily:"Courier New",fontSize:11,fontWeight:"bold"}}>{key}</span>
+                        </td>
+                        <td style={{padding:"4px 8px",border:"1px solid #ddd",color:"#333"}}>{desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+          <button style={{...btnStyle,marginTop:8}} onClick={()=>setScreen("easymenu")}>Back</button>
         </div>
       );
 
@@ -2731,6 +3181,13 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
         "payment_program":<F110Screen/>,
         "cost_center":<KS01Screen/>,
         "fin_statements":<FinStatementsScreen/>,
+        "miro":<MIROScreen/>,
+        "migo":<MIGOScreen/>,
+        "display_doc":<FB03Screen/>,
+        "reverse_doc":<FB08Screen/>,
+        "asset_explorer":<AW01NScreen/>,
+        "month_end":<MonthEndScreen/>,
+        "shortcuts":<ShortcutsScreen/>,
       };
 
       return (
@@ -2819,10 +3276,17 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
                 {tc:"FB50",desc:"GL Journal Entry",color:"#3b82f6"},
                 {tc:"FB60",desc:"Vendor Invoice",color:"#f59e0b"},
                 {tc:"FB70",desc:"Customer Invoice",color:"#ef4444"},
+                {tc:"MIRO",desc:"Invoice Verification",color:"#f59e0b"},
+                {tc:"MIGO",desc:"Goods Receipt",color:"#22c55e"},
+                {tc:"FB03",desc:"Display Document",color:"#3b82f6"},
+                {tc:"FB08",desc:"Reverse Document",color:"#ef4444"},
                 {tc:"FBL1N",desc:"Vendor Line Items",color:"#f59e0b"},
                 {tc:"F110",desc:"Payment Program",color:"#f59e0b"},
                 {tc:"KS01",desc:"Create Cost Center",color:"#8b5cf6"},
+                {tc:"AW01N",desc:"Asset Explorer",color:"#06b6d4"},
                 {tc:"S_ALR_87012284",desc:"Financial Statements",color:"#22c55e"},
+                {tc:"MONTH_END",desc:"Month-End Checklist",color:"#c9a84c"},
+                {tc:"SHORTCUTS",desc:"Keyboard Shortcuts",color:"#64748b"},
               ].map(t=>(
                 <div key={t.tc} onClick={()=>runTcode(t.tc)} style={{
                   background:"#0f172a",border:`1px solid ${t.color}33`,
