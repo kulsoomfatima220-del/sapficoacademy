@@ -3515,16 +3515,8 @@ Keep response concise and encouraging. Focus on SAP FICO knowledge.`
     ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
   </script>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- PWA Install Prompt -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('FICO Academy SW registered:', reg.scope))
-          .catch(err => console.log('SW registration failed:', err));
-      });
-    }
-
     // Install prompt for Android
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
